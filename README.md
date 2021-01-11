@@ -89,7 +89,7 @@ A customer has provided some new requirements for the API which we have agreed t
 
 > **Requirement 2:** The customer wants to display the next three broadcast times for an episode, rather than only the next one.
 
-Update the schema to reflect our proposed changes. Be sure to consider any factors other than the customer's requirments that you think may influence how we choose to surface this data. Take note of any assumptions such as where the data will come from.
+Update the schema to reflect our proposed changes. Be sure to consider any factors other than the customer's requirements that you think may influence how we choose to surface this data. Take note of any assumptions such as where the data will come from.
 
 ### Task 3
 
