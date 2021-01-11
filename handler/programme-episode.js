@@ -14,7 +14,7 @@ const getEpisodeDetail = async (params) => {
         ]);
         const { title, shortSynopsis, mediumSynopsis, longSynopsis, duration, position, brand } = episodeSummary;
         const [ programmeId, seriesId ] = ancestors;
-        const [ seriesSummary, programmeSummary ] = await(
+        const [ programmeSummary, seriesSummary ] = await(
             Promise.all([
                 getSummary(programmeId),
                 getSummary(seriesId)

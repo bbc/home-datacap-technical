@@ -95,6 +95,4 @@ Update the schema to reflect our proposed changes. Be sure to consider any facto
 
 API users have been reporting a number of timeouts on the `/programmes/episodes/{id}` endpoint. We have traced the problem to a handful of backend requests taking longer than the allocated 4 second time limit we have imposed on the API execution time.
 
-Propose a solution to this problem.
-
-If you wish, you may prepare a diagram in advance. Be prepared to explain how your approach solves the problem. Give particular consideration to any trade-offs you are aware of.
+Propose a solution to this problem giving particular consideration to any trade-offs you are aware of.
