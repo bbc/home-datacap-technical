@@ -1,0 +1,22 @@
+{
+  "name": "bbc-programmes-api",
+  "version": "1.0.0",
+  "description": "API for BBC Programmes",
+  "scripts": {
+    "start": "node local.js",
+    "test": "jest",
+    "test:watch": "jest --watch"
+  },
+  "dependencies": {
+    "faker": "^5.1.0"
+  },
+  "devDependencies": {
+    "express": "^4.17.1",
+    "jest": "^26.6.3"
+  },
+  "jest": {
+    "modulePathIgnorePatterns": [
+      "aws"
+    ]
+  }
+}

@@ -1,0 +1,646 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "BBC Programmes API",
+    "description": "Information service for BBC programmes, series and episodes.",
+    "version": "1.0.0"
+  },
+  "tags": [
+    {
+      "name": "Individual resources",
+      "description": "Representations of a single programme, series or episode."
+    },
+    {
+      "name": "Collections",
+      "description": "Representations of a set of items that belong to a programme or series."
+    }
+  ],
+  "paths": {
+    "/programmes/{id}": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/SummaryId"
+        }
+      ],
+      "get": {
+        "tags": ["Individual resources"],
+        "summary": "Retrieve the summary of single programme, series or brand.",
+        "description": "Given any valid ID of a programme, series or brand, will return its summary data.",
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/ItemSummaryResponse"
+          },
+          "400": {
+            "$ref": "#/components/responses/InvalidParameterResponse"
+          },
+          "401": {
+            "$ref": "#/components/responses/MissingApiKeyResponse"
+          },
+          "403": {
+            "$ref": "#/components/responses/InvalidApiKeyResponse"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundResponse"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerErrorResonse"
+          }
+        },
+        "security": [
+          {
+            "api_key": []
+          }
+        ]
+      }
+    },
+    "/programmes/episodes/{id}": {
+      "parameters": [
+        {
+          "$ref": "#/components/parameters/EpisodeId"
+        }
+      ],
+      "get": {
+        "tags": ["Individual resources"],
+        "summary": "Retrieve the detail of a single episode.",
+        "description": "Returns a representation of a programme episode with the given **id**, plus availability and broadcast information.",
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/EpisodeDetailResponse"
+          },
+          "400": {
+            "$ref": "#/components/responses/InvalidParameterResponse"
+          },
+          "401": {
+            "$ref": "#/components/responses/MissingApiKeyResponse"
+          },
+          "403": {
+            "$ref": "#/components/responses/InvalidApiKeyResponse"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotFoundResponse"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerErrorResonse"
+          }
+        },
+        "security": [
+          {
+            "api_key": []
+          }
+        ]
+      }
+    },
+    "/programmes/episodes": {
+      "get": {
+        "tags": ["Collections"],
+        "summary": "Retrieve summaries of all the episodes within a single series or entire programme.",
+        "description": "Returns a paginated set of episodes within a specified series or programme. Must be filtered to a single ancestor using either `series` or `programme` parameters.",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/SeriesId"
+          },
+          {
+            "$ref": "#/components/parameters/ProgrammeId"
+          },
+          {
+            "$ref": "#/components/parameters/PageNumber"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/PaginatedResponse"
+          },
+          "400": {
+            "$ref": "#/components/responses/InvalidParameterResponse"
+          },
+          "401": {
+            "$ref": "#/components/responses/MissingApiKeyResponse"
+          },
+          "403": {
+            "$ref": "#/components/responses/InvalidApiKeyResponse"
+          },
+          "500": {
+            "$ref": "#/components/responses/ServerErrorResonse"
+          }
+        },
+        "security": [
+          {
+            "api_key": []
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "PaginatedResponse": {
+        "title": "Page",
+        "type": "object",
+        "properties": {
+          "page": {
+            "$ref": "#/components/schemas/PageMetadata"
+          },
+          "items": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Summary"
+            }
+          }
+        }
+      },
+      "PageMetadata": {
+        "title": "Page Metadata",
+        "type": "object",
+        "properties": {
+          "current": {
+            "type": "integer",
+            "example": 10
+          },
+          "total": {
+            "type": "integer",
+            "example": 123
+          },
+          "totalItems": {
+            "type": "integer",
+            "example": 345
+          }
+        }
+      },
+      "Summary": {
+        "title": "Summary",
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "p1b2c3d4"
+          },
+          "type": {
+            "type": "string",
+            "enum": ["programme", "series", "episode"],
+            "example": "episode"
+          },
+          "title": {
+            "type": "string",
+            "example": "Episode 1"
+          },
+          "synopsis": {
+            "type": "string",
+            "example": "Some descriptive text."
+          },
+          "duration": {
+            "type": "integer",
+            "nullable": true,
+            "example": 360,
+            "description": "Media length, measured in seconds. Applies only to items with media."
+          },
+          "position": {
+            "type": "integer",
+            "nullable": true,
+            "example": 0,
+            "description": "Zero-indexed position among items with the same parent."
+          },
+          "seriesId": {
+            "type": "string",
+            "nullable": true,
+            "example": "p3fe8320"
+          },
+          "programmeId": {
+            "type": "string",
+            "nullable": true,
+            "example": "plgmr832"
+          },
+          "brand": {
+            "type": "object",
+            "nullable": true,
+            "properties": {
+              "id": {
+                "type": "string",
+                "example": "bbc_one"
+              },
+              "name": {
+                "type": "string",
+                "example": "BBC One"
+              }
+            }
+          }
+        }
+      },
+      "Episode": {
+        "title": "Episode",
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "p1b2c3d4"
+          },
+          "title": {
+            "type": "string",
+            "example": "Episode 1"
+          },
+          "synposes": {
+            "type": "object",
+            "nullable": true,
+            "properties": {
+              "short": {
+                "type": "string",
+                "example": "The short synopsis."
+              },
+              "medium": {
+                "type": "string",
+                "example": "The medium synopsis, with additional detail."
+              },
+              "long": {
+                "type": "string",
+                "example": "The long synopsis with lots of additional details and background information."
+              }
+            }
+          },
+          "duration": {
+            "type": "integer",
+            "nullable": true,
+            "example": "360",
+            "description": "Media length, measured in seconds. Applies only to items with media versions."
+          },
+          "position": {
+            "type": "integer",
+            "nullable": true,
+            "example": 0,
+            "description": "Zero-indexed position among items with the same parent."
+          },
+          "series": {
+            "type": "object",
+            "nullable": true,
+            "properties": {
+              "id": {
+                "type": "string",
+                "example": "p3fe8320"
+              },
+              "name": {
+                "type": "string",
+                "example": "Series 1"
+              }
+            }
+          },
+          "programme": {
+            "type": "object",
+            "nullable": true,
+            "properties": {
+              "id": {
+                "type": "string",
+                "example": "plgmr832"
+              },
+              "name": {
+                "type": "string",
+                "example": "The API Show"
+              }
+            }
+          },
+          "brand": {
+            "type": "object",
+            "nullable": true,
+            "properties": {
+              "id": {
+                "type": "string",
+                "example": "bbc_one"
+              },
+              "name": {
+                "type": "string",
+                "example": "BBC One"
+              }
+            }
+          },
+          "availability": {
+            "type": "object",
+            "nullable": true,
+            "description": "Online availability, if any.",
+            "properties": {
+              "from": {
+                "type": "string",
+                "nullable": true,
+                "example": "2020-01-01T00:00:00.000Z",
+                "description": "ISO 8601 datetime."
+              },
+              "until": {
+                "type": "string",
+                "nullable": true,
+                "example": "2099-12-31T23:59:59.999Z",
+                "description": "ISO 8601 datetime."
+              },
+              "isAvailable": {
+                "type": "boolean",
+                "example": true
+              }
+            }
+          },
+          "nextBroadcast": {
+            "type": "object",
+            "nullable": true,
+            "description": "Next broadcast event for this episode, if any are scheduled.",
+            "properties": {
+              "event": {
+                "$ref": "#/components/schemas/Broadcast"
+              }
+            }
+          }
+        }
+      },
+      "Broadcast": {
+        "title": "Broadcast",
+        "type": "object",
+        "properties": {
+          "start": {
+            "type": "string",
+            "example": "2022-02-02T00:00:00.000Z",
+            "description": "ISO 8601 datetime."
+          },
+          "end": {
+            "type": "string",
+            "example": "2022-02-02T00:01:00.000Z",
+            "description": "ISO 8601 datetime."
+          },
+          "services": {
+            "type": "array",
+            "description": "The list of services that have scheduled the broadcast for this start and end time.",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "string",
+                  "example": "bbc_one_hd"
+                },
+                "name": {
+                  "type": "string",
+                  "example": "BBC One HD"
+                },
+                "type": {
+                  "type": "string",
+                  "example": "TV"
+                },
+                "mediaType": {
+                  "type": "string",
+                  "example": "audio_video"
+                }
+              }
+            }
+          }
+        }
+      },
+      "ErrorMessage": {
+        "title": "Error Message",
+        "type": "object",
+        "properties": {
+          "message": {
+            "type": "string",
+            "example": "Too many foos, not enough bars."
+          }
+        }
+      }
+    },
+    "responses": {
+      "ItemSummaryResponse": {
+        "description": "Successful response.",
+        "headers": {
+          "Content-Type": {
+            "schema": {
+              "$ref": "#/components/headers/JSON"
+            }
+          }
+        },
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Summary"
+            }
+          }
+        }
+      },
+      "EpisodeDetailResponse": {
+        "description": "Successful response.",
+        "headers": {
+          "Content-Type": {
+            "schema": {
+              "$ref": "#/components/headers/JSON"
+            }
+          }
+        },
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Episode"
+            }
+          }
+        }
+      },
+      "PaginatedResponse": {
+        "description": "Successful response.",
+        "headers": {
+          "Content-Type": {
+            "$ref": "#/components/headers/JSON"
+          }
+        },
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/PaginatedResponse"
+            }
+          }
+        }
+      },
+      "InvalidParameterResponse": {
+        "description": "An invalid parameter was supplied.",
+        "headers": {
+          "Content-Type": {
+            "$ref": "#/components/headers/JSON"
+          }
+        },
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorMessage"
+            }
+          }
+        }
+      },
+      "MissingApiKeyResponse": {
+        "description": "API key was not supplied.",
+        "headers": {
+          "Content-Type": {
+            "$ref": "#/components/headers/JSON"
+          }
+        },
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorMessage"
+            }
+          }
+        }
+      },
+      "InvalidApiKeyResponse": {
+        "description": "API key was not valid.",
+        "headers": {
+          "Content-Type": {
+            "$ref": "#/components/headers/JSON"
+          }
+        },
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorMessage"
+            }
+          }
+        }
+      },
+      "NotFoundResponse": {
+        "description": "The specified **id** was not found.",
+        "headers": {
+          "Content-Type": {
+            "$ref": "#/components/headers/JSON"
+          }
+        },
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorMessage"
+            }
+          }
+        }
+      },
+      "ServerErrorResonse": {
+        "description": "An internal server error occured.",
+        "headers": {
+          "Content-Type": {
+            "$ref": "#/components/headers/JSON"
+          }
+        },
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/ErrorMessage"
+            }
+          }
+        }
+      }
+    },
+    "parameters": {
+      "SummaryId": {
+        "in": "path",
+        "name": "id",
+        "schema": {
+          "type": "string"
+        },
+        "required": true,
+        "description": "A programmes identifier.",
+        "examples": {
+          "Programme": {
+            "$ref": "#/components/examples/Programme"
+          },
+          "Series": {
+            "$ref": "#/components/examples/Series"
+          },
+          "Episode": {
+            "$ref": "#/components/examples/Episode"
+          },
+          "Clip": {
+            "$ref": "#/components/examples/Clip"
+          }
+        }
+      },
+      "EpisodeId": {
+        "in": "path",
+        "name": "id",
+        "schema": {
+          "type": "string"
+        },
+        "required": true,
+        "description": "A programmes identifier.",
+        "examples": {
+          "Episode": {
+            "$ref": "#/components/examples/Episode"
+          }
+        }
+      },
+      "SeriesId": {
+        "in": "query",
+        "name": "series",
+        "description": "A valid series **id**. Results will be filtered to direct children of this series. Mutually exclusive with _`programme`_.",
+        "required": false,
+        "schema": {
+          "type": "string"
+        },
+        "examples": {
+          "Blank": {
+            "$ref": "#/components/examples/Blank"
+          },
+          "Series": {
+            "$ref": "#/components/examples/Series"
+          }
+        }
+      },
+      "ProgrammeId": {
+        "in": "query",
+        "name": "programme",
+        "description": "A valid programme **id**. Results will be filtered to all descendents of this programme. Mutually exclusive with _`series`_.",
+        "required": false,
+        "schema": {
+          "type": "string"
+        },
+        "examples": {
+          "Blank": {
+            "$ref": "#/components/examples/Blank"
+          },
+          "Programme": {
+            "$ref": "#/components/examples/Programme"
+          }
+        }
+      },
+      "PageNumber": {
+        "in": "query",
+        "name": "page",
+        "description": "A positive integer representing the page of a result set. Default is 1.",
+        "schema": {
+          "type": "integer"
+        },
+        "required": false,
+        "example": 3
+      }
+    },
+    "headers": {
+      "JSON": {
+        "description": "application/json",
+        "schema": {
+          "type": "string"
+        }
+      }
+    },
+    "examples": {
+      "Blank": {
+        "summary": "(blank)",
+        "value": null
+      },
+      "Programme": {
+        "summary": "Programme example",
+        "value": "p006q2x0"
+      },
+      "Series": {
+        "summary": "Series example",
+        "value": "s000cs1z"
+      },
+      "Episode": {
+        "summary": "Episode example",
+        "value": "e000g09m"
+      },
+      "Clip": {
+        "summary": "Clip example",
+        "value": "c006m86d"
+      }
+    },
+    "securitySchemes": {
+      "api_key": {
+        "type": "apiKey",
+        "name": "x-api-key",
+        "in": "header"
+      }
+    }
+  }
+}
